@@ -1,0 +1,30 @@
+
+dbpl: 5
+
+zczc: 2
+
+
+lfqf: 4
+
+
+
+
+
+sllz: 4
+
+
+
+hmdt: 32
+
+
+humn: 5
+ptdq: humn - dvpt
+dvpt: 3
+lgvd: ljgn * ptdq
+ljgn: 2
+cczh: sllz + lgvd
+pppw: cczh / lfqf
+drzm: hmdt - zczc
+sjmn: drzm * dbpl
+
+root: pppw + sjmn

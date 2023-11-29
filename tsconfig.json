@@ -1,0 +1,22 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+
+    "strict": false,
+
+    "incremental": true,
+
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+
+    "resolveJsonModule": true,
+    "allowJs": true
+  },
+  "ts-node": {
+    "files": true
+  }
+}
