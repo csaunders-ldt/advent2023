@@ -26,7 +26,7 @@ async function setupDir(day: number) {
     console.log(`Setting up ${folder}`);
     mkdirSync(folder);
     aocFetch(`day/${day}/input`).then((text) =>
-      writeFileSync(`${folder}/input1.txt`, text),
+      writeFileSync(`${folder}/input.txt`, text),
     );
     copyFile(`_template/solutions.json`, `${folder}/solutions.json`, () => {});
   }

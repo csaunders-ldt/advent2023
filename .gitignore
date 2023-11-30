@@ -103,8 +103,7 @@ dist
 # TernJS port file
 .tern-port
 
-input1.txt
-input2.txt
+input.txt
 solutions.json
 !_template/solutions.json
 

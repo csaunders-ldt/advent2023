@@ -14,16 +14,15 @@ def solve(part1, part2, test1, test2):
         test_1_answer = part1(open(dir + "\\test1.txt").read())
         if test_1_answer != test1:
             raise Exception(f"Wrong answer! Expected {test1}, got {test_1_answer}")
-    part_1_answer = part1(open(dir + "\\input1.txt").read().strip())
-    attempt(part_1_answer, 1, dir)
+    input_text = open(dir + "\\input.txt").read().strip()
+    attempt(part1(input_text), 1, dir)
     if not part2:
         return
     if test2:
         test_2_answer = part2(open(dir + "\\test2.txt").read())
         if test_2_answer != test2:
             raise Exception(f"Wrong answer! Expected {test2}, got {test_2_answer}")
-    part_2_answer = part2(open(dir + "\\input2.txt").read().strip())
-    attempt(part_2_answer, 2, dir)
+    attempt(part2(input_text), 2, dir)
 
 
 def get_session():
@@ -35,33 +34,24 @@ def get_session():
 
 
 def check_solution(answer, day, part):
-    url = f"https://adventofcode.com/2023/day/${day}/answer"
-    query = f"level=${part}&answer=${answer}"
+    url = f"https://adventofcode.com/2023/day/{day}/answer"
+    query = f"level={part}&answer={answer}"
+    print(query)
+    print(get_session())
     headers = {
-        "cookie": f"session=${get_session()}",
+        "cookie": f"session={get_session()}",
         "Content-Type": "application/x-www-form-urlencoded",
     }
     req = request.Request(url, query.encode("utf-8"), headers=headers)
     resp = request.urlopen(req)
-    return not resp.read().decode("utf-8").includes("not the right answer")
-
-
-def get_part_two(day, dir):
-    url = f"https://adventofcode.com/2023/day/${day}/input"
-    headers = {"cookie": f"session=${get_session()}"}
-    req = request.Request(url, headers=headers)
-    resp = request.urlopen(req)
-    input = resp.read().decode("utf-8")
-    with open(dir + f"..//input2.txt", "w") as outfile:
-        outfile.write(input)
-
+    return "not the right answer" not in resp.read().decode("utf-8")
 
 def attempt(solution, part, dir):
     solutions = json.loads(open(dir + "/solutions.json").read())
     solution_part = solutions[f"part{part}"]
 
     if solution_part["correctSolution"]:
-        if solution_part["solution"] == solution:
+        if solution_part["correctSolution"] == solution:
             print(f"Part {part} correct!")
             return True
         else:
@@ -78,12 +68,10 @@ def attempt(solution, part, dir):
     if check_solution(solution, day, part):
         solution_part["correctSolution"] = solution
         print("Correct!")
-        get_part_two(day, dir)
-        sys.exit(0)
     else:
         print(f"Wrong answer ({solution}!")
 
-    with open(dir + "solution.json", "w") as outfile:
+    with open(Path(dir).joinpath("solutions.json"), "w") as outfile:
         outfile.write(json.dumps(solutions, indent=4))
 
     return solution_part["correctSolution"] == solution

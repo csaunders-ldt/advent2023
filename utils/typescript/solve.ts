@@ -42,12 +42,16 @@ export async function solve<
   const dir = dirname(caller());
   const day = dir.replace(/.*day/, '');
 
-  const part1Solved = existsSync(`${dir}/input2.txt`);
+  const solutionsFile = JSON.parse(
+    readFileSync(`${dir}/solutions.json`, 'utf8'),
+  ) as Solutions;
+
+  const part1Solved = solutionsFile.part1.correctSolution !== null;
   const part = part1Solved ? 2 : 1;
 
-  const [solver, file, test, testFile] = part1Solved
-    ? [part2, 'input2.txt', test2, 'test2.txt']
-    : [part1, 'input1.txt', test1, 'test1.txt'];
+  const [solver, test, testFile] = part1Solved
+    ? [part2, test2, 'test2.txt']
+    : [part1, test1, 'test1.txt'];
 
   if (test) {
     const testInput = parser(read(`${dir}/${testFile}`));
@@ -61,14 +65,11 @@ export async function solve<
     console.log(`Test passed for day ${day} part ${part}`);
   }
 
-  const fileName = `${dir}/${file}`;
+  const fileName = `${dir}/input.txt`;
   const input = parser(read(fileName));
   const answer = solver(input, false)?.toString();
   console.log(`Attempting ${answer}`);
 
-  const solutionsFile = JSON.parse(
-    readFileSync(`${dir}/solutions.json`, 'utf8'),
-  ) as Solutions;
   const { attemptedSolutions, correctSolution } = solutionsFile[`part${part}`];
   if (attemptedSolutions.includes(answer || '') && !correctSolution) {
     console.log('Solution already attempted!');
@@ -78,12 +79,6 @@ export async function solve<
   const isCorrect = await checkAnswer(part, day, answer || '', correctSolution);
   if (isCorrect) {
     solutionsFile[`part${part}`].correctSolution = answer;
-  }
-
-  if (isCorrect && part === 1) {
-    aocFetch(`day/${day}/input`).then((text) =>
-      writeFileSync(`${dir}/input2.txt`, text),
-    );
   }
 
   writeFileSync(`${dir}/solutions.json`, JSON.stringify(solutionsFile));
