@@ -1,4 +1,10 @@
-import { readFileSync, existsSync, appendFile, writeFileSync } from 'fs';
+import {
+  readFileSync,
+  existsSync,
+  appendFile,
+  writeFileSync,
+  readFile,
+} from 'fs';
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import caller from 'caller';
@@ -60,7 +66,9 @@ export async function solve<
   const answer = solver(input, false)?.toString();
   console.log(`Attempting ${answer}`);
 
-  const solutionsFile = JSON.parse(read(`${dir}/solutions.json`)) as Solutions;
+  const solutionsFile = JSON.parse(
+    readFileSync(`${dir}/solutions.json`, 'utf8'),
+  ) as Solutions;
   const { attemptedSolutions, correctSolution } = solutionsFile[`part${part}`];
   if (attemptedSolutions.includes(answer || '') && !correctSolution) {
     console.log('Solution already attempted!');
