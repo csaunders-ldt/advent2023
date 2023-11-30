@@ -1,7 +1,8 @@
-export function aocFetch(path: string) {
-  return fetch(`https://adventofcode.com/2023/${path}`, {
+export async function aocFetch(path: string) {
+  const res = await fetch(`https://adventofcode.com/2022/${path}`, {
     headers: {
       cookie: `session=${process.env.SESSION}`,
     },
-  }).then((res) => res.text());
+  });
+  return res.text();
 }
