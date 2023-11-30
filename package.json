@@ -11,7 +11,8 @@
     "setup": "ts-node ./setup/setup.ts",
     "typescript": "ts-node ./setup/advent.ts",
     "python": "python3 ./setup/advent.py",
-    "ruby": "ruby ./setup./advent.rb"
+    "ruby": "ruby ./setup./advent.rb",
+    "start": "yarn typescript"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
