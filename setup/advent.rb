@@ -4,7 +4,7 @@ load sorted[0]
 
 path = sorted[0].split('/')[0]
 
-input = File.read("#{path}/part1.txt")
+input = File.read("#{path}/input1.txt")
 solution = File.read("#{path}/solutions.txt").split("\n")[-1]
 part1_guess = part1(input)
 raise "Part 1 incorrect. Expected #{solution} got #{part1_guess}" unless part1_guess.to_s == solution.to_s

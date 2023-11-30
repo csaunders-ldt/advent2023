@@ -40,8 +40,8 @@ export async function solve<
   const part = part1Solved ? 2 : 1;
 
   const [solver, file, test, testFile] = part1Solved
-    ? [part2, 'part2.txt', test2, 'test2.txt']
-    : [part1, 'part1.txt', test1, 'test1.txt'];
+    ? [part2, 'input2.txt', test2, 'test2.txt']
+    : [part1, 'input1.txt', test1, 'test1.txt'];
 
   if (test) {
     const testInput = parser(read(`${dir}/${testFile}`));
@@ -62,7 +62,7 @@ export async function solve<
 
   const solutionsFile = JSON.parse(read(`${dir}/solutions.json`)) as Solutions;
   const { attemptedSolutions, correctSolution } = solutionsFile[`part${part}`];
-  if (attemptedSolutions.includes(answer || '')) {
+  if (attemptedSolutions.includes(answer || '') && !correctSolution) {
     console.log('Solution already attempted!');
     return;
   }
@@ -72,7 +72,7 @@ export async function solve<
     solutionsFile[`part${part}`].correctSolution = answer;
   }
 
-  if (isCorrect && part === 2) {
+  if (isCorrect && part === 1) {
     aocFetch(`day/${day}/input`).then((text) =>
       writeFileSync(`${dir}/input2.txt`, text),
     );

@@ -13,13 +13,20 @@ const solverByLanguage = {
   ruby: 'solve.rb',
 };
 
+if (!process.env.SESSION) {
+  throw new Error(
+    'Missing SESSION environment variable.' +
+      'Copy the session cookie from the browser to .env.',
+  );
+}
+
 async function setupDir(day: number) {
   const folder = `day${day}`;
   if (!existsSync(folder)) {
     console.log(`Setting up ${folder}`);
     mkdirSync(folder);
     aocFetch(`day/${day}/input`).then((text) =>
-      writeFileSync(`${folder}/part1.txt`, text),
+      writeFileSync(`${folder}/input1.txt`, text),
     );
     copyFile(`_template/solutions.json`, `${folder}/solutions.json`, () => {});
   }

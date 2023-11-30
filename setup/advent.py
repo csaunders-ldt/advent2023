@@ -8,7 +8,7 @@ file = files[-1]
 module = import_module(file[:-3].replace('\\', '.').replace('/', '.'))
 
 part1Answer = open(file[:-8] + 'solutions.txt').read().splitlines()[-1]
-part1 = module.part1(open(file[:-8] + 'part1.txt').read().strip())
+part1 = module.part1(open(file[:-8] + 'input1.txt').read().strip())
 assert part1Answer == str(part1), f'Part 1 failed, expected {part1Answer}, got {part1}'
 print('Part 1 passed')
 
