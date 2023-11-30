@@ -105,7 +105,7 @@ dist
 
 input.txt
 input2.txt
-solutions.txt
-solutions2.txt
+solutions.json
+!_template/solutions.json
 
 __pycache__

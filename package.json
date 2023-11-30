@@ -1,9 +1,9 @@
 {
-  "name": "advent2022",
+  "name": "advent2023",
   "version": "1.0.0",
   "description": "Advent of code",
   "main": "index.js",
-  "repository": "https://github.com/csaunders-ldt/advent2022.git",
+  "repository": "https://github.com/csaunders-ldt/advent2023.git",
   "author": "csaunders-ldt <chris@letsdothis.com>",
   "license": "UNLICENSED",
   "private": false,
@@ -19,14 +19,13 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
-    "@types/caller": "^1.0.0",
-    "@types/lodash": "^4.14.190",
-    "@types/node": "18.0.0",
-    "@types/node-fetch": "^2.6.2",
+    "@types/caller": "^1.0.2",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "20.10.1",
+    "@types/node-fetch": "^2.6.9",
     "caller": "^1.1.0",
-    "hygen": "^6.2.11",
-    "prettier": "^2.8.0",
+    "prettier": "^3.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.3"
+    "typescript": "^5.3.2"
   }
 }

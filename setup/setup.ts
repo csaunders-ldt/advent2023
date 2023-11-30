@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync, copyFile, existsSync } from 'fs';
 import { config } from 'dotenv';
 import { forEach, map } from 'lodash';
 import { env } from 'process';
+import { aocFetch } from '../utils/typescript/fetch';
 config();
 
 const YEAR = 2023;
@@ -17,14 +18,10 @@ async function setupDir(day: number) {
   if (!existsSync(folder)) {
     console.log(`Setting up ${folder}`);
     mkdirSync(folder);
-    fetch(`https://adventofcode.com/2022/day/${day}/input`, {
-      headers: {
-        cookie: `session=${process.env.SESSION}`,
-      },
-    })
-      .then((res) => res.text())
-      .then((text) => writeFileSync(`${folder}/input.txt`, text));
-    writeFileSync(`${folder}/solutions.txt`, '');
+    aocFetch(`day/${day}/input`).then((text) =>
+      writeFileSync(`${folder}/part1.txt`, text),
+    );
+    copyFile(`_template/solutions.json`, `${folder}/solutions.json`, () => {});
   }
   const solver = solverByLanguage[env.LANGUAGE || 'typescript'];
   if (!existsSync(`${folder}/${solver}`)) {
@@ -35,7 +32,9 @@ async function setupDir(day: number) {
 // Just set up all folders every time - it takes a fraction of a second
 const today = new Date();
 const lastDay = today.getFullYear() === YEAR ? today.getDate() : 25;
-const daysToSetup = map(Array.from({ length: lastDay }), (_, i) => i + 1);
-console.log(daysToSetup);
-
-forEach(daysToSetup, (day) => setupDir(day));
+if (process.argv[2]) {
+  setupDir(parseInt(process.argv[2], 10));
+} else {
+  const daysToSetup = map(Array.from({ length: lastDay }), (_, i) => i + 1);
+  forEach(daysToSetup, (day) => setupDir(day));
+}

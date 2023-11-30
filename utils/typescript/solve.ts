@@ -2,6 +2,7 @@ import { readFileSync, existsSync, appendFile, writeFileSync } from 'fs';
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import caller from 'caller';
+import { aocFetch } from './fetch';
 config();
 
 type SolveArgs<T, TResult1, TResult2> = {
@@ -10,6 +11,17 @@ type SolveArgs<T, TResult1, TResult2> = {
   test1?: TResult1;
   test2?: TResult2;
   parser: (input: string) => T;
+};
+
+type Solutions = {
+  part1: {
+    attemptedSolutions: string[];
+    correctSolution: string | null;
+  };
+  part2: {
+    attemptedSolutions: string[];
+    correctSolution: string | null;
+  };
 };
 
 function read(fileName: string): string {
@@ -27,9 +39,9 @@ export async function solve<
   const part1Solved = existsSync(`${dir}/input2.txt`);
   const part = part1Solved ? 2 : 1;
 
-  const [solver, file, solutionsFile, test, testFile] = part1Solved
-    ? [part2, 'input2.txt', 'solutions2.txt', test2, 'test2.txt']
-    : [part1, 'input.txt', 'solutions.txt', test1, 'test.txt'];
+  const [solver, file, test, testFile] = part1Solved
+    ? [part2, 'part2.txt', test2, 'test2.txt']
+    : [part1, 'part1.txt', test1, 'test1.txt'];
 
   if (test) {
     const testInput = parser(read(`${dir}/${testFile}`));
@@ -47,14 +59,41 @@ export async function solve<
   const input = parser(read(fileName));
   const answer = solver(input, false)?.toString();
   console.log(`Attempting ${answer}`);
-  const solutions = read(`${dir}/${solutionsFile}`).split('\n');
-  if (solutions.includes(answer || '')) {
+
+  const solutionsFile = JSON.parse(read(`${dir}/solutions.json`)) as Solutions;
+  const { attemptedSolutions, correctSolution } = solutionsFile[`part${part}`];
+  if (attemptedSolutions.includes(answer || '')) {
     console.log('Solution already attempted!');
     return;
   }
-  appendFile(`${dir}/${solutionsFile}`, `${answer}\n`, () => {});
+  attemptedSolutions.push(answer || '');
+  const isCorrect = await checkAnswer(part, day, answer || '', correctSolution);
+  if (isCorrect) {
+    solutionsFile[`part${part}`].correctSolution = answer;
+  }
+
+  if (isCorrect && part === 2) {
+    aocFetch(`day/${day}/input`).then((text) =>
+      writeFileSync(`${dir}/input2.txt`, text),
+    );
+  }
+
+  writeFileSync(`${dir}/solutions.json`, JSON.stringify(solutionsFile));
+}
+
+async function checkAnswer(
+  part: number,
+  day: string,
+  answer: string,
+  previous: string | null,
+) {
+  if (previous !== null) {
+    const prefix = answer === previous ? 'Matches' : 'Does not match';
+    console.log(`${prefix} previous answer!`);
+    return answer === previous;
+  }
   const result = await fetch(
-    `https://adventofcode.com/2022/day/${day}/answer`,
+    `https://adventofcode.com/2023/day/${day}/answer`,
     {
       method: 'POST',
       headers: {
@@ -67,17 +106,8 @@ export async function solve<
   const body = await result.text();
   if (body.includes('not the right answer')) {
     console.log(`Wrong answer\n${body}`);
-  } else {
-    console.log('Correct answer!');
-    if (part === 2) return;
-
-    writeFileSync(`${dir}/solutions2.txt`, '');
-    fetch(`https://adventofcode.com/2022/day/${day}/input`, {
-      headers: {
-        cookie: `session=${process.env.SESSION}`,
-      },
-    })
-      .then((res) => res.text())
-      .then((text) => writeFileSync(`${dir}/input2.txt`, text));
+    return false;
   }
+  console.log('Correct answer!');
+  return true;
 }
