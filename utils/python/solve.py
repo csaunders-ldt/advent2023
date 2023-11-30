@@ -12,9 +12,18 @@ def check_solution(answer, day, part):
     url=f"https://adventofcode.com/2023/day/${day}/answer"
     query=f"level=${part}&answer=${answer}"
     headers={"cookie": f"session=${get_session()}"}
-    req =  request.Request(url, query) # this will make the method "POST"
+    req =  request.Request(url, query, headers=headers)
     resp = request.urlopen(req)
     return not resp.read().decode("utf-8").includes("not the right answer")
+
+def get_part_two(day, dir):
+    url = f"https://adventofcode.com/2023/day/${day}/input"
+    headers={"cookie": f"session=${get_session()}"}
+    req =  request.Request(url, headers=headers)
+    resp = request.urlopen(req)
+    input = resp.read().decode("utf-8")
+    with open(dir + f"..//input2.txt", "w") as outfile:
+        outfile.write(input)
 
 def attempt(solution):
     abs_path = os.path.abspath((inspect.stack()[0])[1])
@@ -39,7 +48,7 @@ def attempt(solution):
     if check_solution(solution, day, 2 if is_part_two else 1):
         solution_part['correctSolution'] = solution
         print("Correct!")
-        return True
+        get_part_two(day, dir)
     else:
         print(f"Wrong answer ({solution}!")
 
