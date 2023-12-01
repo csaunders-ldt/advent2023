@@ -37,7 +37,6 @@ function toAdvancedNumber(input: string) {
 }
 
 function part2(_input: string[]) {
-  console.log(map(_input, toAdvancedNumber));
   return sum(map(_input, toAdvancedNumber));
 }
 
