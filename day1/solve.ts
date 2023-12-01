@@ -22,7 +22,7 @@ const numbers = {
   eight: 8,
   nine: 9,
 };
-const regexStr = `(${keys(numbers).join('|')}|${values(numbers).join('|')})`;
+const regexStr = `(${keys(numbers).join('|')}|\d)`;
 const startRegex = new RegExp(regexStr);
 const endRegex = new RegExp(`.*${regexStr}`);
 
