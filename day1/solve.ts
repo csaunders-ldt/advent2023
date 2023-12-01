@@ -1,4 +1,4 @@
-import { forEach, keys, map, sum, toPairs, values } from 'lodash';
+import { keys, map, sum, values } from 'lodash';
 import { parseLines, solve } from '../utils/typescript';
 
 function toNumber(line: string) {
