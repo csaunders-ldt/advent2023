@@ -4,7 +4,7 @@ import { parseLines, solve } from '../utils/typescript';
 function toNumber(line: string) {
   const justNumbers = line.replace(/[^0-9]/g, '');
   const characters = justNumbers.split('');
-  return parseInt(`${characters[0]}${characters.last}`, 10);
+  return parseInt(`${characters[0]}${characters.at(-1)}`, 10);
 }
 
 function part1(_input: string[]) {
