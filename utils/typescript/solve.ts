@@ -78,6 +78,7 @@ export async function solve<
   attemptedSolutions.push(answer || '');
   const isCorrect = await checkAnswer(part, day, answer || '', correctSolution);
   if (isCorrect) {
+    console.log(`Part ${part} correct!`);
     solutionsFile[`part${part}`].correctSolution = answer;
   }
 
