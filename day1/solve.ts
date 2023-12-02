@@ -4,7 +4,7 @@ import { parseLines, solve } from '../utils/typescript';
 function toNumber(line: string) {
   const justNumbers = line.replace(/[^0-9]/g, '');
   const characters = justNumbers.split('');
-  return parseInt(`${characters[0]}${characters.at(-1)}`, 10);
+  return parseInt(`${characters[0]}${characters.last}`, 10);
 }
 
 function part1(_input: string[]) {
@@ -22,7 +22,7 @@ const numbers = {
   eight: 8,
   nine: 9,
 };
-const regexStr = `(${keys(numbers).join('|')}|\d)`;
+const regexStr = `(${keys(numbers).join('|')}|${values(numbers).join('|')})`;
 const startRegex = new RegExp(regexStr);
 const endRegex = new RegExp(`.*${regexStr}`);
 
