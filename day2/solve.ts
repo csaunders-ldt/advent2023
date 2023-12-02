@@ -40,5 +40,5 @@ solve({
   test1: 8,
   part2,
   test2: 2286,
-  parser: parseLines({ mapFn: countCubes }),
+  parser: (input) => input.split('\n').map(countCubes),
 });
