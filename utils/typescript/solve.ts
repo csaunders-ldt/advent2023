@@ -8,7 +8,6 @@ import {
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import caller from 'caller';
-import { aocFetch } from './fetch';
 config();
 
 type SolveArgs<T, TResult1, TResult2> = {
