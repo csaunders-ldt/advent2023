@@ -81,7 +81,10 @@ export async function solve<
     solutionsFile[`part${part}`].correctSolution = answer;
   }
 
-  writeFileSync(`${dir}/solutions.json`, JSON.stringify(solutionsFile));
+  writeFileSync(
+    `${dir}/solutions.json`,
+    JSON.stringify(solutionsFile, null, 2),
+  );
 }
 
 async function checkAnswer(
