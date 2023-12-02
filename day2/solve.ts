@@ -14,7 +14,7 @@ function maxCounts(line: string, colour: string) {
   return max(counts);
 }
 
-function countCubes(line: string, i: number) {
+function countCubes(line: string, i: number): CubeCount {
   return {
     game: i + 1,
     red: maxCounts(line, 'red'),
