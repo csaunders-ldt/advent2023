@@ -8,4 +8,4 @@ function part2(_input: string[]) {
   return 'part2';
 }
 
-solve({ part1, part2, parser: parseLines() });
+solve({ part1, test1: 'TODO', part2, test2: 'TODO', parser: parseLines() });
