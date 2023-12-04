@@ -16,7 +16,7 @@ export function parseLines<T = string>(
   return (input) => input.split(separator).map(mapFn);
 }
 
-export function getGridParser<T>(opts?: GridParserOptions<T>) {
+export function getGridParser<T = string>(opts?: GridParserOptions<T>) {
   const {
     separator = '\n',
     rowSeparator = '',
