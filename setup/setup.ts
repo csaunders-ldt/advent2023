@@ -29,6 +29,8 @@ async function setupDir(day: number) {
       writeFileSync(`${folder}/input.txt`, text),
     );
     copyFile(`_template/solutions.json`, `${folder}/solutions.json`, () => {});
+    copyFile(`_template/test1.txt`, `${folder}/test1.txt`, () => {});
+    copyFile(`_template/test2.txt`, `${folder}/test2.txt`, () => {});
   }
   const solver = solverByLanguage[env.LANGUAGE || 'typescript'];
   if (!existsSync(`${folder}/${solver}`)) {
