@@ -29,18 +29,19 @@ function nearbyNumbers(input: Space[][], x: number, y: number): number[] {
   return uniq(numbers.filter((x) => !!x?.value)).map((n) => n.value);
 }
 
-function part1(grid: Space[][]) {
-  const parts = grid.flatMap((row, y) =>
-    row.flatMap((space, x) => (space.isPart ? nearbyNumbers(grid, x, y) : [])),
+function partNumbers(grid: Space[][]): number[][] {
+  return grid.flatMap((row, y) =>
+    row.map((space, x) => (space.isPart ? nearbyNumbers(grid, x, y) : [])),
   );
-  return sum(parts);
+}
+
+function part1(grid: Space[][]) {
+  return sum(partNumbers(grid).flat());
 }
 
 function part2(grid: Space[][]) {
-  const parts = grid.flatMap((row, y) =>
-    row.map((space, x) => (space.isPart ? nearbyNumbers(grid, x, y) : [])),
-  );
-  return sum(parts.filter((x) => x.length === 2).map(([l, r]) => l * r));
+  const newPartNumbers = partNumbers(grid).filter(({ length }) => length === 2);
+  return sum(newPartNumbers.map(([l, r]) => l * r));
 }
 
 solve({
