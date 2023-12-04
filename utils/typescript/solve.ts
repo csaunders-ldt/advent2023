@@ -111,7 +111,9 @@ async function checkAnswer(
   );
   const body = await result.text();
   if (body.includes('not the right answer')) {
-    console.log(`Wrong answer\n${body}`);
+    console.log(
+      `Wrong answer\n${body.match(/<article><p>(.*)<\/p><\/article>/)[1]}`,
+    );
     return false;
   }
   console.log('Correct answer!');
