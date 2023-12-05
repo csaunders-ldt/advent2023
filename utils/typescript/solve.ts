@@ -68,7 +68,9 @@ export async function solve<
     console.log('Solution already attempted!');
     return;
   }
-  attemptedSolutions.push(answer || '');
+  if (!correctSolution) {
+    attemptedSolutions.push(answer || '');
+  }
   const isCorrect = await checkAnswer(part, day, answer || '', correctSolution);
   if (isCorrect) {
     console.log(`Part ${part} correct!`);
