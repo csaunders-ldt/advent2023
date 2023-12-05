@@ -1,4 +1,4 @@
-import { chunk, max, min, sortBy } from 'lodash';
+import { chunk, map, max, min, reduce, sortBy } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Map = [dest: number, src: number, length: number];
@@ -22,13 +22,11 @@ function applyMap(seed: number, maps: Map[]): number {
 }
 
 function part1({ seeds, maps }: Input) {
-  const results = seeds.map((seed) => maps.reduce(applyMap, seed));
-  return min(results);
+  return min(map(seeds, (seed) => reduce(maps, applyMap, seed)));
 }
 
 function getCandidates(ranges: [number, number][], maps: Map[]) {
   const candidates = ranges.map(([start, end]) => {
-    console.log({ start, end });
     const overlaps = maps.filter(
       ([, src, len]) => start <= src + len && src <= end,
     );
@@ -39,12 +37,11 @@ function getCandidates(ranges: [number, number][], maps: Map[]) {
       const diff = dest - src;
       const res = [[max([start, src]) + diff, min([src + len, end]) + diff]];
       if (src > start) res.push([start, src - 1]);
-      if (end > start + len) res.push([end, start + len - 1]);
+      if (end > src + len + 11) res.push([src + len, end - 1]);
 
       return res;
     }) as [number, number][];
   });
-  console.log(candidates.flat(1));
   return candidates.flat(1);
 }
 
