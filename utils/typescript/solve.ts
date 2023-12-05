@@ -1,10 +1,4 @@
-import {
-  readFileSync,
-  existsSync,
-  appendFile,
-  writeFileSync,
-  readFile,
-} from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import caller from 'caller';
@@ -34,7 +28,7 @@ function read(fileName: string): string {
 }
 
 export async function solve<
-  T = string[],
+  T,
   TResult1 = { toString: () => string } | undefined,
   TResult2 = TResult1,
 >({ part1, test1, part2, test2, parser }: SolveArgs<T, TResult1, TResult2>) {
