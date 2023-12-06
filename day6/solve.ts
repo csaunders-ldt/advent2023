@@ -7,10 +7,8 @@ function parser(input: string) {
 
 function score(input: [time: number, distance: number]) {
   const [time, distance] = input;
-  const triangleEdge = (time ** 2 - 4 * (distance + 1)) ** 0.5;
-  const leftEdge = floor((time + triangleEdge) / 2);
-  const rightEdge = ceil((time - triangleEdge) / 2);
-  return leftEdge - rightEdge + 1;
+  const edge = (time ** 2 - 4 * (distance + 1)) ** 0.5;
+  return floor((time + edge) / 2) - ceil((time - edge) / 2) + 1;
 }
 
 function part1(input: [number, number][]) {
