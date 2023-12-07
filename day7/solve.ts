@@ -1,4 +1,4 @@
-import { groupBy, sortBy, sum, values } from 'lodash';
+import { groupBy, map, reverse, sortBy, sum, values } from 'lodash';
 import { solve } from '../utils/typescript';
 
 function parser(input: string) {
@@ -12,9 +12,8 @@ function sub(cards: string) {
 function score([cards]: string[]) {
   if (cards === '11111') return '5011111';
   const jacks = cards.split('').filter((c) => c === '1').length;
-  const groups = groupBy(cards.replace('1', '').split(''));
-  const groupLengths = values(groups).map((v) => v.length);
-  const [rank1, rank2] = groupLengths.sort().reverse();
+  const groups = values(groupBy(cards.replace('1', '').split('')));
+  const [rank1, rank2] = reverse(sortBy(map(groups, (v) => v.length)));
   return `${rank1 + jacks}${rank2 ?? 0}${sub(cards)}`;
 }
 
@@ -27,8 +26,7 @@ function part1(input: string[][]) {
 }
 
 function part2(input: string[][]) {
-  const mappedInput = input.map(([cards, v]) => [cards.replace(/J/g, '1'), v]);
-  return sumScore(sortBy(mappedInput, score));
+  return sumScore(sortBy(input, ([c, v]) => score([c.replace(/J/g, '1'), v])));
 }
 
 solve({ part1, test1: 6440, part2, test2: 5905, parser });
