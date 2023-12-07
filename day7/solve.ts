@@ -11,10 +11,10 @@ function sub(cards: string) {
 
 function score([cards]: string[]) {
   if (cards === '11111') return '5011111';
-  const jacks = cards.split('').filter((c) => c === '1').length;
+  const jackCount = cards.split('').filter((c) => c === '1').length;
   const groups = values(groupBy(cards.replace('1', '').split('')));
   const [rank1, rank2] = reverse(sortBy(map(groups, (v) => v.length)));
-  return `${rank1 + jacks}${rank2 ?? 0}${sub(cards)}`;
+  return `${rank1 + jackCount}${rank2 ?? 0}${sub(cards)}`;
 }
 
 function sumScore(sortedHands: string[][]) {
