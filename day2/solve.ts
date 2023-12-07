@@ -1,5 +1,5 @@
 import { max, sum, sumBy } from 'lodash';
-import { parseLines, solve } from '../utils/typescript';
+import { solve } from '../utils/typescript';
 
 type CubeCount = {
   game: number;
