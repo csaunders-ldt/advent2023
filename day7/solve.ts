@@ -10,7 +10,7 @@ function sub(cards: string) {
 }
 
 function score([cards]: string[]) {
-  if (cards === '11111') return '5,011111';
+  if (cards === '11111') return '5011111';
   const jacks = cards.split('').filter((c) => c === '1').length;
   const groups = groupBy(cards.replace('1', '').split(''));
   const groupLengths = values(groups).map((v) => v.length);
