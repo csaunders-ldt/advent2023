@@ -94,6 +94,10 @@ async function checkAnswer(
     console.log(`${prefix} previous answer!`);
     return answer === previous;
   }
+  if (process.env['NO_SUBMIT'] === 'true') {
+    console.log(`Would have submitted ${answer}`);
+    return false;
+  }
   const result = await fetch(
     `https://adventofcode.com/2023/day/${day}/answer`,
     {
