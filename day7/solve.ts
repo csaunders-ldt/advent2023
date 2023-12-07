@@ -14,7 +14,7 @@ function score([cards]: string[]) {
   const jacks = cards.split('').filter((c) => c === '1').length;
   const groups = groupBy(cards.replace('1', '').split(''));
   const groupLengths = values(groups).map((v) => v.length);
-  const [rank1, rank2] = groupLengths.sort().reverse().slice(0, 2);
+  const [rank1, rank2] = groupLengths.sort().reverse();
   return `${rank1 + jacks}${rank2 ?? 0}${sub(cards)}`;
 }
 
