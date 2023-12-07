@@ -5,7 +5,7 @@ function parser(input: string) {
   return input.split('\n').map((l) => l.split(' '));
 }
 
-function sub(cards: string) {
+function makeLexicallySort(cards: string) {
   return cards.replaceAll('A', 'Z').replaceAll('K', 'Y').replaceAll('T', 'B');
 }
 
@@ -14,7 +14,7 @@ function score([cards]: string[]) {
   const jackCount = cards.split('').filter((c) => c === '1').length;
   const groups = values(groupBy(cards.replace('1', '').split('')));
   const [rank1, rank2] = reverse(sortBy(map(groups, (v) => v.length)));
-  return `${rank1 + jackCount}${rank2 ?? 0}${sub(cards)}`;
+  return `${rank1 + jackCount}${rank2 ?? 0}${makeLexicallySort(cards)}`;
 }
 
 function sumScore(sortedHands: string[][]) {
