@@ -12,7 +12,7 @@ function parser(input: string) {
   return { path: rl.split(''), nodes: fromPairs(entries) };
 }
 
-function stepsFrom(i: Input, start: string, done: (p: string) => boolean) {
+function score(i: Input, start: string, done: (p: string) => boolean) {
   const { path, nodes } = i;
   let [pos, steps] = [start, 0];
   while (!done(pos)) {
@@ -22,7 +22,7 @@ function stepsFrom(i: Input, start: string, done: (p: string) => boolean) {
 }
 
 function part1(input: Input) {
-  return stepsFrom(input, 'AAA', (pos) => pos === 'ZZZ');
+  return score(input, 'AAA', (pos) => pos === 'ZZZ');
 }
 
 function gcd(a: number, b: number) {
@@ -34,10 +34,8 @@ function lcm(vals: number[]) {
 }
 
 function part2(input: Input) {
-  const startNodes = keys(input.nodes).filter((n) => n.endsWith('A'));
-  const values = startNodes.map((n) =>
-    stepsFrom(input, n, (pos) => pos.endsWith('Z')),
-  );
+  const starts = keys(input.nodes).filter((n) => n.endsWith('A'));
+  const values = starts.map((n) => score(input, n, (pos) => pos.endsWith('Z')));
   return lcm(values);
 }
 
