@@ -6,12 +6,12 @@ function parser(input: string): Input {
   return input.split('\n').map((l) => l.trim());
 }
 
-function part1(_input: Input) {
-  return 'part1';
+function part1(input: Input) {
+  return input;
 }
 
-function part2(_input: Input) {
-  return 'part2';
+function part2(input: Input) {
+  return input;
 }
 
-solve({ part1, test1: 'TODO', part2, test2: 'TODO', parser });
+solve({ part1, test1: [], part2, test2: [], parser });
