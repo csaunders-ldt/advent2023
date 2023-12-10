@@ -6,7 +6,6 @@
   "repository": "https://github.com/csaunders-ldt/advent2023.git",
   "author": "csaunders-ldt <chris@letsdothis.com>",
   "license": "UNLICENSED",
-  "private": false,
   "scripts": {
     "setup": "ts-node ./setup/setup.ts",
     "typescript": "ts-node ./setup/advent.ts",
@@ -28,5 +27,6 @@
     "prettier": "^3.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
