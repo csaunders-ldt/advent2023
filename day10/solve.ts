@@ -2,6 +2,7 @@ import { range, sum } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = string[][];
+// 1 if connected, 0 if not, Top Right Bottom Left
 const paths = {
   '|': 0b1010,
   '-': 0b0101,
@@ -54,22 +55,20 @@ function part1(input: Input) {
   return path(input, getStart(input)).size / 2 - 1;
 }
 
+function scoreLine(chars: [string, boolean][], inside = false) {
+  if (!chars.length) return 0;
+
+  const [[value, seen], ...rest] = chars;
+  if (seen) {
+    return scoreLine(rest, inside !== !!(paths[value] & 0b1000));
+  }
+  return (inside ? 1 : 0) + scoreLine(rest, inside);
+}
+
 function part2(input: Input) {
-  const seen = path(input, getStart(input));
+  const insidePath = path(input, getStart(input));
   const scores = input.map((line, y) => {
-    let inside = false;
-    let score = 0;
-    let x = 0;
-    for (const l of line) {
-      if (paths[l] & 0b1000 && seen.has(`${y},${x}`)) {
-        inside = !inside;
-      }
-      if (!seen.has(`${y},${x}`) && inside) {
-        score += 1;
-      }
-      x++;
-    }
-    return score;
+    return scoreLine(line.map((v, x) => [v, insidePath.has(String([y, x]))]));
   });
   return sum(scores);
 }
