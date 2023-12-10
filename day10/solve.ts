@@ -29,8 +29,7 @@ function neighbours([row, col]: [number, number]): [number, number][] {
 
 function validNeighbours(grid: Input, [row, col]: [number, number]) {
   const mask = paths[grid[row][col]];
-  const filter = range(4).map((i) => ((mask >> i) & 1) == 1);
-  return neighbours([row, col]).filter((_, i) => filter[i]);
+  return neighbours([row, col]).filter((_, i) => !!((mask >> i) & 1));
 }
 
 function path(grid: Input, start: [number, number][]): Set<string> {
