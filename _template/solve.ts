@@ -1,9 +1,9 @@
 import { solve } from '../utils/typescript';
 
-type Input = string[];
+type Input = string[][];
 
 function parser(input: string): Input {
-  return input.split('\n').map((l) => l.trim());
+  return input.split('\n').map((l) => l.split(''));
 }
 
 function part1(input: Input) {
