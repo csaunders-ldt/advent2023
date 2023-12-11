@@ -7,8 +7,7 @@ function parser(input: string): Input {
   return input.split('\n').map((l) => l.split(''));
 }
 
-function gaps(input: Input, n = 1000000) {
-  let gaps = 0;
+function gaps(input: Input, n = 1000000, gaps = 0) {
   return input.map((row) => (row.includes('#') ? gaps : (gaps += n)));
 }
 
