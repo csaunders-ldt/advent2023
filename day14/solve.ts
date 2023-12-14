@@ -1,53 +1,32 @@
-import { entries, forEach, sum, sumBy, times, zip } from 'lodash';
+import { entries, map, reverse, sum, sumBy, times, zip } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = string[][];
 
 function parser(input: string): Input {
-  return input.split('\n').map((l) => l.split(''));
+  return zip(...reverse(input.split('\n').map((l) => l.split(''))));
 }
 
-function tilt(input: Input) {
-  const top = Array(input[0].length).fill(0);
-  forEach(input, (row, y) => {
-    forEach(row, (cell, x) => {
-      if (cell === '#') {
-        top[x] = y + 1;
-      }
-
-      if (cell === 'O') {
-        let pos = top[x];
-        while ((input[pos][x] === 'O' || input[pos][x] === '#') && pos < y) {
-          pos++;
-        }
-        input[pos][x] = 'O';
-        if (pos !== y) {
-          input[y][x] = '.';
-        }
-      }
-    });
-  });
+function roll([char, ...rest]: string[], buffer: string[] = []): string[] {
+  if (['.', 'O'].includes(char)) return roll(rest, [...buffer, char]);
+  if (!rest.length) return [...buffer.sort(), char];
+  return [...buffer.sort(), char, ...roll(rest)];
 }
 
 function score(input: Input) {
-  return sum(
-    input.flatMap((row, y) =>
-      row.map((cell) => (cell === 'O' ? input.length - y : 0)),
-    ),
-  );
+  return sumBy(input, (row) => sum(row.map((c, x) => (c === 'O' ? x + 1 : 0))));
 }
 
 function part1(input: Input) {
-  tilt(input);
-  return score(input);
+  return score(map(input, (l) => roll(l)));
 }
 
 function hash(input: Input) {
-  return input.map((row) => row.join('')).join('\n');
+  return map(input, (row) => row.join('')).join('\n');
 }
 
-function rotate(input: Input) {
-  return zip(...input).map((row) => row.reverse());
+function rotateAndRoll(input: Input) {
+  return zip(...reverse(input.map((l) => roll(l))));
 }
 
 function part2(input: Input) {
@@ -55,16 +34,12 @@ function part2(input: Input) {
   let cycles = 0;
   while (!seen[hash(input)]) {
     seen[hash(input)] = cycles++;
-    times(4, () => {
-      tilt(input);
-      input = rotate(input);
-    });
+    times(4, () => (input = rotateAndRoll(input)));
   }
-  const cycleStart = seen[hash(input)];
-  const cycleLen = cycles - cycleStart;
-  const finalPos = ((1000000000 - cycleStart) % cycleLen) + cycleStart;
+  const start = seen[hash(input)];
+  const finalPos = ((1000000000 - start) % (cycles - start)) + start;
   const [grid] = entries(seen).find(([_, c]) => c === finalPos);
-  return score(parser(grid));
+  return score(grid.split('\n').map((l) => l.split('')));
 }
 
 solve({ part1, test1: 136, part2, test2: 64, parser });
