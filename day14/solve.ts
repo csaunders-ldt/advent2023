@@ -8,8 +8,10 @@ function parser(input: string): Input {
 }
 
 function roll([char, ...rest]: string[], buffer: string[] = []): string[] {
-  if (['.', 'O'].includes(char)) return roll(rest, [...buffer, char]);
   if (!rest.length) return [...buffer.sort(), char];
+
+  if (['.', 'O'].includes(char)) return roll(rest, [...buffer, char]);
+
   return [...buffer.sort(), char, ...roll(rest)];
 }
 
