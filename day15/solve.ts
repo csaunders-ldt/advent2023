@@ -1,4 +1,14 @@
-import { entries, map, reduce, sum, sumBy } from 'lodash';
+import {
+  entries,
+  map,
+  partial,
+  partialRight,
+  reduce,
+  remove,
+  split,
+  sum,
+  sumBy,
+} from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = string[];
@@ -12,16 +22,20 @@ function part1(input: Input) {
   return sum(map(input, (l) => reduce(l, hash, 0)));
 }
 
-type HashMap = Record<string, Record<string, number>>;
+type Result = Record<string, Record<string, number>>;
 function part2(input: Input) {
   const result = input.reduce((acc, l) => {
     const [_, key, op, value] = l.match(/(\w+)(.)(\d*)/);
     const box = (acc[reduce(key, hash, 0)] ||= {});
-    box[key] = op === '-' ? 0 : parseInt(value, 10);
+    if (op === '-') {
+      delete box[key];
+    } else {
+      box[key] = parseInt(value, 10);
+    }
     return acc;
-  }, {} as HashMap);
+  }, {} as Result);
   return sumBy(entries(result), ([box, vals]) =>
-    sum(map(entries(vals), ([_, v], i) => (parseInt(box) + 1) * +v * (i + 1))),
+    sum(map(entries(vals), ([_, v], i) => (+box + 1) * +v * (i + 1))),
   );
 }
 
