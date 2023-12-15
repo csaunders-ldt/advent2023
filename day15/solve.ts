@@ -1,14 +1,4 @@
-import {
-  entries,
-  map,
-  partial,
-  partialRight,
-  reduce,
-  remove,
-  split,
-  sum,
-  sumBy,
-} from 'lodash';
+import { entries, map, reduce, sum, sumBy } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = string[];
