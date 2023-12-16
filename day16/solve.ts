@@ -1,4 +1,4 @@
-import { map, max, maxBy, range, uniqBy } from 'lodash';
+import { map, max, range, uniqBy } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Grid = string[][];
@@ -27,10 +27,9 @@ function next(grid: Grid, { x, y, dir }: State): State[] {
 function bfs(grid: Grid, states: State[]): number {
   const seen = new Set<string>(states.map((s) => JSON.stringify(s)));
   while (states.length) {
-    states = states.flatMap((state) => next(grid, state));
-    states = states.filter(
-      (state) => grid[state.y]?.[state.x] && !seen.has(JSON.stringify(state)),
-    );
+    const nextStates = states.flatMap((state) => next(grid, state));
+    const validStates = nextStates.filter((state) => grid[state.y]?.[state.x]);
+    states = validStates.filter((state) => !seen.has(JSON.stringify(state)));
     states.forEach((state) => seen.add(JSON.stringify(state)));
   }
   const points = [...seen].map((v) => JSON.parse(v)).map(({ x, y }) => [x, y]);
