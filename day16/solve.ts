@@ -1,4 +1,4 @@
-import { map, max, maxBy, uniqBy } from 'lodash';
+import { map, max, maxBy, range, uniqBy } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Grid = string[][];
@@ -54,17 +54,12 @@ function part1(grid: Grid) {
 }
 
 function part2(grid: Grid) {
-  const topStarts = grid.map((_, x) => ({ x, y: 0, dir: 2 }));
-  const bottomStarts = grid.map((_, x) => ({ x, y: grid.length - 1, dir: 0 }));
-  const leftStarts = grid[0].map((_, y) => ({ x: 0, y, dir: 1 }));
-  const rightStarts = grid[0].map((_, y) => ({
-    x: grid[0].length - 1,
-    y,
-    dir: 3,
-  }));
-  const starts = [...topStarts, ...bottomStarts, ...leftStarts, ...rightStarts];
-  const scores = starts.map((start) => bfs(grid, [start]));
-  console.log(scores);
+  const starts = range(grid.length).flatMap((i) => [
+    { x: i, y: grid.length - 1, dir: 0 },
+    { x: 0, y: i, dir: 1 },
+    { x: i, y: 0, dir: 2 },
+    { x: grid[0].length - 1, y: i, dir: 3 },
+  ]);
   return max(map(starts, (start) => bfs(grid, [start])));
 }
 
