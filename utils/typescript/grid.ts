@@ -9,8 +9,11 @@ import {
   values,
 } from 'lodash';
 
-export function printGrid(grid: string[][]) {
-  console.log(grid.map((row) => row.join('')).join('\n') + '\n');
+export function printGrid<T = string>(
+  grid: T[][],
+  toString = (x: T) => String(x),
+) {
+  console.log(grid.map((row) => row.map(toString).join('')).join('\n') + '\n');
 }
 
 export type Point = [x: number, y: number];
