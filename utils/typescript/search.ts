@@ -8,8 +8,8 @@ export function pruneSeen<T>(set: T[], seen: Set<string>) {
 export function bfs<T>(
   set: T[],
   next: (t: T) => T[],
-  isDone: (t: T[]) => boolean = (set) => set.length === 0,
   prune: (set: T[]) => T[] = (set) => set,
+  isDone: (t: T[]) => boolean = (set) => set.length === 0,
 ) {
   while (!isDone(set)) {
     set = prune(set.flatMap(next));
