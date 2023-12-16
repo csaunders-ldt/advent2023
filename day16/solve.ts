@@ -1,4 +1,4 @@
-import { maxBy, uniqBy } from 'lodash';
+import { map, max, maxBy, uniqBy } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Grid = string[][];
@@ -36,7 +36,7 @@ function next(grid: Grid, { x, y, dir }: State): State[] {
   return [move({ x, y }, dir)];
 }
 
-function bfs(grid: Grid, states: State[]): [number, number][] {
+function bfs(grid: Grid, states: State[]): number {
   const seen = new Set<string>(states.map((s) => JSON.stringify(s)));
   while (states.length) {
     states = states.flatMap((state) => next(grid, state));
@@ -45,12 +45,12 @@ function bfs(grid: Grid, states: State[]): [number, number][] {
     );
     states.forEach((state) => seen.add(JSON.stringify(state)));
   }
-  return [...seen].map((v) => JSON.parse(v)).map(({ x, y }) => [x, y]);
+  const points = [...seen].map((v) => JSON.parse(v)).map(({ x, y }) => [x, y]);
+  return uniqBy(points, JSON.stringify).length;
 }
 
 function part1(grid: Grid) {
-  const points = bfs(grid, [{ x: 0, y: 0, dir: 1 }]);
-  return uniqBy(points, JSON.stringify).length;
+  return bfs(grid, [{ x: 0, y: 0, dir: 1 }]);
 }
 
 function part2(grid: Grid) {
@@ -63,18 +63,9 @@ function part2(grid: Grid) {
     dir: 3,
   }));
   const starts = [...topStarts, ...bottomStarts, ...leftStarts, ...rightStarts];
-  const scores = starts.map((start) => {
-    const points = bfs(grid, [start]);
-    return [uniqBy(points, JSON.stringify).length, start];
-  });
+  const scores = starts.map((start) => bfs(grid, [start]));
   console.log(scores);
-  const best = maxBy(starts, (start) => {
-    const points = bfs(grid, [start]);
-    return uniqBy(points, JSON.stringify).length;
-  });
-  console.log(best);
-  const points = bfs(grid, [best]);
-  return uniqBy(points, JSON.stringify).length;
+  return max(map(starts, (start) => bfs(grid, [start])));
 }
 
 solve({ part1, test1: 46, part2, test2: 51, parser });
