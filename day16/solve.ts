@@ -18,22 +18,16 @@ function move({ x, y }: Omit<State, 'dir'>, dir: number) {
   return { x: x + dxdy[dir][0], y: y + dxdy[dir][1], dir };
 }
 
-function next(grid: Grid, { x, y, dir }: State): State[] {
-  const char = grid[y]?.[x];
+function nextDirs(char: string, dir: number) {
+  if (char === '/') return [dir + (dir % 2 === 0 ? 1 : -1)];
+  if (char === '\\') return [3 - dir];
+  if (char === '|' && dir % 2 === 1) return [0, 2];
+  if (char === '-' && dir % 2 === 0) return [1, 3];
+  return [dir];
+}
 
-  if (char === '/') {
-    return [move({ x, y }, dir + (dir % 2 === 0 ? 1 : -1))];
-  }
-  if (char === '\\') {
-    return [move({ x, y }, 3 - dir)];
-  }
-  if (char === '|' && dir % 2 === 1) {
-    return [move({ x, y }, 0), move({ x, y }, 2)];
-  }
-  if (char === '-' && dir % 2 === 0) {
-    return [move({ x, y }, 1), move({ x, y }, 3)];
-  }
-  return [move({ x, y }, dir)];
+function next(grid: Grid, { x, y, dir }: State): State[] {
+  return nextDirs(grid[y]?.[x], dir).map((dir) => move({ x, y }, dir));
 }
 
 function bfs(grid: Grid, states: State[]): number {
