@@ -45,7 +45,7 @@ function part2(grid: Grid) {
     { x: i, y: grid.length - 1, dir: 0 },
     { x: 0, y: i, dir: 1 },
     { x: i, y: 0, dir: 2 },
-    { x: grid[0].length - 1, y: i, dir: 3 },
+    { x: grid.length - 1, y: i, dir: 3 },
   ]);
   return max(map(starts, (start) => bfs(grid, [start])));
 }
