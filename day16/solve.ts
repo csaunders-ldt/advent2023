@@ -8,14 +8,8 @@ function parser(input: string): Grid {
   return input.split('\n').map((l) => l.split(''));
 }
 
-const dxdy = [
-  [0, -1],
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-];
 function move({ x, y }: Omit<State, 'dir'>, dir: number) {
-  return { x: x + dxdy[dir][0], y: y + dxdy[dir][1], dir };
+  return { x: x + ((2 - dir) % 2), y: y + ((dir - 1) % 2), dir };
 }
 
 function nextDirs(char: string, dir: number) {
