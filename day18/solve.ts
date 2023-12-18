@@ -35,11 +35,11 @@ function part1(input: Input) {
 }
 
 function part2(input: Input) {
-  const mappedInput = input.map(({ color }) => {
-    const length = parseInt(color.slice(2, -2), 16);
-    let dir = (parseInt(color.at(-2)) + 1) % 4;
-    return { dir, length, color };
-  });
+  const mappedInput = input.map(({ color }) => ({
+    length: parseInt(color.slice(2, -2), 16),
+    dir: (parseInt(color.at(-2)) + 1) % 4,
+    color,
+  }));
   return part1(mappedInput);
 }
 
