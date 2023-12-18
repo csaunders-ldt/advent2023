@@ -1,4 +1,3 @@
-import { keys, range } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Coordinate = [number, number];
