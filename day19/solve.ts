@@ -15,70 +15,62 @@ type Rule = {
 type Rules = Record<string, Rule | string>;
 type Input = { rules: Rules; inputs: Range[] };
 
+function parseRule(rule: string): [string, Rule | string][] {
+  const [k, value] = rule.match(/(\w+){(.*)}/).slice(1);
+
+  return value.split(',').map((r, i) => {
+    if (!r.match(/[<>]/)) return [`${k}${i}`, `${r}0`];
+
+    const [_, key, op, value, pass] = r.match(/(\w+)([<>])(\d+):(\w+)/);
+    const results = { pass: `${pass}0`, fail: `${k}${i + 1}` };
+    const rule = { key, op, value: +value, ...results };
+    return [`${k}${i}`, rule] as [string, Rule];
+  });
+}
+
 function parser(input: string): Input {
   const [rulesStr, inputsStr] = input.split('\n\n');
-
-  const pairs = rulesStr.split('\n').flatMap((rule) => {
-    const [k, value] = rule.match(/(\w+){(.*)}/).slice(1);
-    return value.split(',').map((r, i) => {
-      if (!r.match(/[<>]/)) return [`${k}${i}`, `${r}0`];
-      const [_, key, op, value, pass] = r.match(/(\w+)([<>])(\d+):(\w+)/);
-      const rule = {
-        key,
-        op,
-        value: +value,
-        pass: `${pass}0`,
-        fail: `${k}${i + 1}`,
-      };
-      return [`${k}${i}`, rule] as [string, Rule];
-    });
-  });
-
-  const rules = Object.fromEntries(pairs);
+  const pairs = rulesStr.split('\n').flatMap(parseRule);
   const inputs = inputsStr.split('\n').map((line) => {
-    const [_, x, m, a, s] = line.match(/x=(\d+),m=(\d+),a=(\d+),s=(\d+)/);
+    const [_, x, m, a, s] = line.match(/(\d+)/g);
     return { x: [+x, +x], m: [+m, +m], a: [+a, +a], s: [+s, +s] } as Range;
   });
 
-  return { rules, inputs };
+  return { rules: Object.fromEntries(pairs), inputs };
 }
 
 function getSize(range: Range) {
   return values(range).reduce((acc, [min, max]) => acc * (max - min + 1), 1);
 }
 
-function splitRange(range: Range, { key, op, value }: Rule) {
-  const [l, r] = range[key];
-  const [pass, fail] =
-    op === '>'
-      ? [
-          { ...range, [key]: [max([value + 1, l]), r] },
-          { ...range, [key]: [l, min([value, r])] },
-        ]
-      : [
-          { ...range, [key]: [l, min([value - 1, r])] },
-          { ...range, [key]: [max([value, l]), r] },
-        ];
-  return [pass, fail];
+function passRange([l, r]: Coordinate, { value, op }: Omit<Rule, 'key'>) {
+  return op === '>' ? [max([value + 1, l]), r] : [l, min([value - 1, r])];
+}
+
+function failRange([l, r]: Coordinate, { value, op }: Omit<Rule, 'key'>) {
+  return op === '>' ? [l, min([value, r])] : [max([value, l]), r];
+}
+
+function splitRange(range: Range, { key, ...rule }: Rule) {
+  const ranges = [passRange(range[key], rule), failRange(range[key], rule)];
+  return ranges.map((r) => ({ ...range, [key]: r }));
 }
 
 function evalRule(range: Range, ruleName: string, rules: Rules): number {
   if (ruleName === 'R0' || getSize(range) < 0) return 0;
   if (ruleName === 'A0') return getSize(range);
-  const rule = rules[ruleName];
-  if (typeof rule === 'string') return evalRule(range, rule, rules);
 
+  const rule = (rules[rules[ruleName] as string] ?? rules[ruleName]) as Rule;
   const [pass, fail] = splitRange(range, rule);
   return evalRule(pass, rule.pass, rules) + evalRule(fail, rule.fail, rules);
 }
 
+function evalRules(range: Range, rules: Rules) {
+  return evalRule(range, 'in0', rules) && sum(values(range).map((v) => v[0]));
+}
+
 function part1({ rules, inputs }: Input) {
-  return sum(
-    inputs.map((input) => {
-      const result = evalRule(input, 'in0', rules);
-      return result && sum(values(input).map((v) => v[0]));
-    }),
-  );
+  return sum(inputs.map((range) => evalRules(range, rules)));
 }
 
 function part2(input: Input) {
