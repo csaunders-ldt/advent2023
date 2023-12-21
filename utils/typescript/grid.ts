@@ -16,6 +16,18 @@ export function printGrid<T = string>(
   console.log(grid.map((row) => row.map(toString).join('')).join('\n') + '\n');
 }
 
+export function toVisualisation(grid: string[][]): Record<string, Point[]> {
+  const points: Record<string, Point[]> = {};
+  grid.forEach((row, y) =>
+    row.forEach((cell, x) => {
+      if (cell === '.') return;
+      if (!points[cell]) points[cell] = [];
+      points[cell].push([x, y]);
+    }),
+  );
+  return points;
+}
+
 export type Point = [x: number, y: number];
 export function visualisePoints(points: Record<string, Point[]>) {
   const xs = map(flatten(values(points)), ([x]) => x);

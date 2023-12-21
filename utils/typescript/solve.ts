@@ -116,6 +116,8 @@ async function checkAnswer(
     );
     return false;
   }
-  console.log('Correct answer!');
+  console.log(
+    `Correct answer\n${body.match(/<article><p>(.*)<\/p><\/article>/)[1]}`,
+  );
   return true;
 }
