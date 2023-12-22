@@ -1,4 +1,4 @@
-import { groupBy, max, min, range, remove, sortBy, zip } from 'lodash';
+import { cloneDeep, max, min, range, remove, sortBy, sum } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Coordinate = [x: number, y: number, z: number];
@@ -43,22 +43,14 @@ function cells(block: Block): Coordinate[] {
 }
 
 type MaxZMap = { z: number; block: Block | null }[][];
-function drop(block: Block, map: MaxZMap) {
+function drop(block: Block, map: MaxZMap, testRun: boolean) {
   const allCells = cells(block);
   const minZ = min([block.start[2], block.end[2]]);
   const topZ = max(allCells.map(([x, y]) => map[y][x].z));
   const drop = max([minZ - topZ - 1, 0]);
-  // console.log(
-  //   `Dropping ${block.char} by ${drop} (topZ is ${topZ}, minZ is ${minZ})`,
-  // );
   allCells.forEach(([x, y, z]) => {
     const previousBest = map[y][x];
     if (previousBest.z <= z - drop) {
-      // console.log(
-      //   `Previously ${previousBest.z} as ${previousBest.block?.char} vs ${
-      //     z - drop - 1
-      //   }`,
-      // );
       if (
         previousBest.block &&
         previousBest.z === z - drop - 1 &&
@@ -70,38 +62,43 @@ function drop(block: Block, map: MaxZMap) {
       }
       previousBest.block = block;
       previousBest.z = z - drop;
-      // console.log(`Set (${x}, ${y}) to ${previousBest.z} for ${block.char}`);
     }
   });
+  if (!testRun) {
+    block.start[2] = block.start[2] - drop;
+    block.end[2] = block.end[2] - drop;
+  }
+  return drop;
 }
 
-function dropBlocks(input: Input) {
+function dropBlocks(input: Input, testRun: boolean) {
   const maxZ = range(10).map(() =>
-    range(10).map(() => ({ z: 1, block: null })),
+    range(10).map(() => ({ z: 0, block: null })),
   );
 
   const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
-  todo.forEach((block) => drop(block, maxZ));
+  return sum(todo.map((block) => (drop(block, maxZ, testRun) ? 1 : 0)));
 }
 
 function part1(input: Input, isTest: boolean) {
-  dropBlocks(input);
-  console.log(input);
-  console.log(
-    input.filter((b) =>
-      [...b.supporting].every((target) => target.supportedBy.size !== 1),
-    ).length,
-  );
-  if (!isTest) {
-    process.exit(0);
-  }
-  return input.filter((b) =>
+  const clone = cloneDeep(input);
+  dropBlocks(clone, false);
+  const result = clone.filter((b) =>
     [...b.supporting].every((target) => target.supportedBy.size !== 1),
   ).length;
+  return result;
 }
 
 function part2(input: Input) {
-  return input;
+  dropBlocks(input, false);
+  let count = 0;
+  for (const block of input) {
+    const newIn = cloneDeep(input);
+    remove(newIn, (b) => b.char === block.char);
+    const result = dropBlocks(newIn, true);
+    count += result;
+  }
+  return count;
 }
 
-solve({ part1, test1: 5, part2, test2: [], parser });
+solve({ part1, test1: 5, part2, test2: 7, parser });
