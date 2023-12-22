@@ -1,11 +1,10 @@
-import { cloneDeep, max, min, range, remove, sortBy, sum } from 'lodash';
+import { max, min, range, sortBy, uniq } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Coordinate = [x: number, y: number, z: number];
 type Block = {
   start: Coordinate;
   end: Coordinate;
-  supporting: Set<Block>;
   supportedBy: Set<Block>;
 };
 type Input = Block[];
@@ -17,12 +16,7 @@ function parseLine(line: string): Coordinate {
 function parser(input: string): Input {
   return input.split('\n').map((l) => {
     const [start, end] = l.split('~').map(parseLine);
-    return {
-      start,
-      end,
-      supporting: new Set<Block>(),
-      supportedBy: new Set<Block>(),
-    };
+    return { start, end, supportedBy: new Set<Block>() };
   });
 }
 
@@ -48,7 +42,6 @@ function drop(block: Block, map: MaxZMap) {
         previousBest.z === z - drop - 1 &&
         previousBest.block !== block
       ) {
-        previousBest.block.supporting.add(block);
         block.supportedBy.add(previousBest.block);
       }
       previousBest.block = block;
@@ -65,10 +58,10 @@ function dropBlocks(input: Input) {
 
 function part1(input: Input) {
   dropBlocks(input);
-  const result = input.filter((b) =>
-    [...b.supporting].every((target) => target.supportedBy.size !== 1),
-  ).length;
-  return result;
+  const weakLinks = input.filter((b) => b.supportedBy.size === 1);
+  return (
+    input.length - uniq(weakLinks.map((b) => [...b.supportedBy][0])).length
+  );
 }
 
 function part2(input: Input) {
