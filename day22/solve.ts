@@ -30,10 +30,10 @@ function drop(toDrop: Block, map: MaxZMap) {
 
   cells(toDrop).forEach(([x, y]) => {
     const { z, block } = map[y][x];
+    if (block && z === minZ - drop - 1 && block !== toDrop) {
+      toDrop.supportedBy.add(block);
+    }
     if (z <= minZ - drop) {
-      if (block && z === minZ - drop - 1 && block !== toDrop) {
-        toDrop.supportedBy.add(block);
-      }
       map[y][x] = { z: maxZ - drop, block: toDrop };
     }
   });
