@@ -24,27 +24,24 @@ function cells({ start: [x1, y1], end: [x2, y2] }: Block) {
 
 type MaxZMap = { z: number; block?: Block }[][];
 function drop(toDrop: Block, map: MaxZMap) {
-  const allCells = cells(toDrop);
   const [minZ, maxZ] = sortBy([toDrop.start[2], toDrop.end[2]]);
-  const topZ = max(allCells.map(([x, y]) => map[y][x].z));
-  const drop = minZ - topZ - 1;
+  const dropTo = max(cells(toDrop).map(([x, y]) => map[y][x].z));
+  const drop = minZ - dropTo - 1;
 
   cells(toDrop).forEach(([x, y]) => {
-    const prev = map[y][x];
-    if (prev.z <= minZ - drop) {
-      if (prev.block && prev.z === minZ - drop - 1 && prev.block !== toDrop) {
-        toDrop.supportedBy.add(prev.block);
+    const { z, block } = map[y][x];
+    if (z <= minZ - drop) {
+      if (block && z === minZ - drop - 1 && block !== toDrop) {
+        toDrop.supportedBy.add(block);
       }
-      prev.block = toDrop;
-      prev.z = maxZ - drop;
+      map[y][x] = { z: maxZ - drop, block: toDrop };
     }
   });
 }
 
 function dropBlocks(input: Input) {
   const maxZ = range(10).map(() => range(10).map(() => ({ z: 0 })));
-  const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
-  todo.forEach((block) => drop(block, maxZ));
+  sortBy(input, (b) => b.start[2]).forEach((block) => drop(block, maxZ));
 }
 
 function part1(input: Input) {
@@ -55,8 +52,7 @@ function part1(input: Input) {
 
 function countDamage(block: Block, _: number, input: Input) {
   let gone = new Set([block]);
-  const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
-  for (const nextBlock of todo) {
+  for (const nextBlock of sortBy(input, (b) => b.start[2])) {
     const newSupport = [...nextBlock.supportedBy].filter((b) => !gone.has(b));
     if (newSupport.length === 0 && nextBlock.supportedBy.size > 0) {
       gone.add(nextBlock);
