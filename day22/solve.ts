@@ -7,9 +7,6 @@ type Block = {
   end: Coordinate;
   supporting: Set<Block>;
   supportedBy: Set<Block>;
-  resting: boolean;
-  char: string;
-  supportChar: Set<String>;
 };
 type Input = Block[];
 
@@ -25,9 +22,6 @@ function parser(input: string): Input {
       end,
       supporting: new Set<Block>(),
       supportedBy: new Set<Block>(),
-      resting: false,
-      char: String.fromCharCode(65 + i),
-      supportChar: new Set<String>(),
     };
   });
 }
@@ -42,7 +36,7 @@ function cells(block: Block): Coordinate[] {
     .flat(2) as Coordinate[];
 }
 
-type MaxZMap = { z: number; block: Block | null }[][];
+type MaxZMap = { z: number; block?: Block }[][];
 function drop(block: Block, map: MaxZMap, testRun: boolean) {
   const allCells = cells(block);
   const minZ = min([block.start[2], block.end[2]]);
@@ -54,10 +48,9 @@ function drop(block: Block, map: MaxZMap, testRun: boolean) {
       if (
         previousBest.block &&
         previousBest.z === z - drop - 1 &&
-        previousBest.block.char !== block.char
+        previousBest.block !== block
       ) {
         previousBest.block.supporting.add(block);
-        previousBest.block.supportChar.add(block.char);
         block.supportedBy.add(previousBest.block);
       }
       previousBest.block = block;
@@ -72,18 +65,15 @@ function drop(block: Block, map: MaxZMap, testRun: boolean) {
 }
 
 function dropBlocks(input: Input, testRun: boolean) {
-  const maxZ = range(10).map(() =>
-    range(10).map(() => ({ z: 0, block: null })),
-  );
+  const maxZ = range(10).map(() => range(10).map(() => ({ z: 0 })));
 
   const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
   return sum(todo.map((block) => (drop(block, maxZ, testRun) ? 1 : 0)));
 }
 
-function part1(input: Input, isTest: boolean) {
-  const clone = cloneDeep(input);
-  dropBlocks(clone, false);
-  const result = clone.filter((b) =>
+function part1(input: Input) {
+  dropBlocks(input, false);
+  const result = input.filter((b) =>
     [...b.supporting].every((target) => target.supportedBy.size !== 1),
   ).length;
   return result;
@@ -93,10 +83,15 @@ function part2(input: Input) {
   dropBlocks(input, false);
   let count = 0;
   for (const block of input) {
-    const newIn = cloneDeep(input);
-    remove(newIn, (b) => b.char === block.char);
-    const result = dropBlocks(newIn, true);
-    count += result;
+    let gone = new Set([block]);
+    const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
+    for (const nextBlock of todo) {
+      const newSupport = [...nextBlock.supportedBy].filter((b) => !gone.has(b));
+      if (newSupport.length === 0 && nextBlock.supportedBy.size > 0) {
+        gone.add(nextBlock);
+      }
+    }
+    count += gone.size - 1;
   }
   return count;
 }
