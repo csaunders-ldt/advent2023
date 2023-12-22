@@ -37,7 +37,7 @@ function cells(block: Block): Coordinate[] {
 }
 
 type MaxZMap = { z: number; block?: Block }[][];
-function drop(block: Block, map: MaxZMap, testRun: boolean) {
+function drop(block: Block, map: MaxZMap) {
   const allCells = cells(block);
   const minZ = min([block.start[2], block.end[2]]);
   const topZ = max(allCells.map(([x, y]) => map[y][x].z));
@@ -57,22 +57,18 @@ function drop(block: Block, map: MaxZMap, testRun: boolean) {
       previousBest.z = z - drop;
     }
   });
-  if (!testRun) {
-    block.start[2] = block.start[2] - drop;
-    block.end[2] = block.end[2] - drop;
-  }
   return drop;
 }
 
-function dropBlocks(input: Input, testRun: boolean) {
+function dropBlocks(input: Input) {
   const maxZ = range(10).map(() => range(10).map(() => ({ z: 0 })));
 
   const todo = sortBy(input, (b) => max([b.start[2], b.end[2]]));
-  return sum(todo.map((block) => (drop(block, maxZ, testRun) ? 1 : 0)));
+  return sum(todo.map((block) => (drop(block, maxZ) ? 1 : 0)));
 }
 
 function part1(input: Input) {
-  dropBlocks(input, false);
+  dropBlocks(input);
   const result = input.filter((b) =>
     [...b.supporting].every((target) => target.supportedBy.size !== 1),
   ).length;
@@ -80,7 +76,7 @@ function part1(input: Input) {
 }
 
 function part2(input: Input) {
-  dropBlocks(input, false);
+  dropBlocks(input);
   let count = 0;
   for (const block of input) {
     let gone = new Set([block]);
