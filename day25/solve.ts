@@ -1,15 +1,4 @@
-import {
-  countBy,
-  entries,
-  fromPairs,
-  keys,
-  remove,
-  sampleSize,
-  sortBy,
-  sum,
-  times,
-  uniq,
-} from 'lodash';
+import { keys, sum } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = Record<string, string[]>;
