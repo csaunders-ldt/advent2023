@@ -26,15 +26,13 @@ function parser(input: string): Input {
   return result;
 }
 
-function part1(input: Input) {
-  const [group1, group2] = [new Set(keys(input)), new Set<string>()];
-  const wrongSet = (v: string) => input[v].filter((v) => group2.has(v)).length;
+function part1(map: Input) {
+  const [set1, set2] = [keys(map), []];
+  const wrongSet = (v: string) => map[v].filter((v) => set2.includes(v)).length;
   do {
-    const key = sortBy([...group1], (v) => wrongSet(v)).at(-1);
-    group1.delete(key);
-    group2.add(key);
-  } while (sum([...group1].map(wrongSet)) != 3);
-  return group1.size * group2.size;
+    set2.push(set1.sort((a, b) => wrongSet(a) - wrongSet(b)).pop());
+  } while (sum(set1.map(wrongSet)) != 3);
+  return set1.length * set2.length;
 }
 
 function part2(input: Input) {
