@@ -68,7 +68,7 @@ function gcd(a: number, b: number) {
 function part2(input: Input, isTest: boolean) {
   const [sumsOfPos, sumsOfDx] = zip(...input).map((v) => v.map(sum));
   // TODO: This was 1000
-  const res = range(380).map((answer) => {
+  const res = range(-1000, 1000).map((answer) => {
     if (sumsOfDx.includes(answer)) return false;
 
     let multipleAndRemainder = zip(sumsOfPos, sumsOfDx).map(([p, dx]) => {
@@ -88,12 +88,12 @@ function part2(input: Input, isTest: boolean) {
     multipleAndRemainder = sortBy(multipleAndRemainder, ([m]) => -m);
 
     // TODO: Bases, mods
-    const bases = [];
-    const mods = [];
+    const bases: bigint[] = [];
+    const mods: number[] = [];
     // remove coprimes
     while (multipleAndRemainder.length > 0) {
       const [base, mod] = multipleAndRemainder.shift();
-      bases.push(base);
+      bases.push(BigInt(base));
       mods.push(mod);
       multipleAndRemainder = multipleAndRemainder.filter(
         ([m]) => gcd(m, base) === 1,
@@ -105,16 +105,14 @@ function part2(input: Input, isTest: boolean) {
     for (const base of bases) {
       product *= BigInt(base);
     }
-    const inverses = bases.map((base) =>
-      Math.floor(Number(product / BigInt(base))),
-    );
+    const inverses = bases.map((base) => product / BigInt(base));
 
-    const modifiedGcd = (a: number, b: number) => {
+    const modifiedGcd = (a: bigint, b: bigint) => {
       let initialB = b;
-      let [x0, x1] = [0, 1];
-      if (b === 1) return 1;
+      let [x0, x1] = [0n, 1n];
+      if (b === 1n) return 1n;
       while (a > 1) {
-        let [div, mod] = [Math.floor(a / b), a % b];
+        let [div, mod] = [a / b, a % b];
         [a, b] = [b, mod];
         [x0, x1] = [x1 - div * x0, x0];
       }
@@ -130,7 +128,6 @@ function part2(input: Input, isTest: boolean) {
       ret += BigInt(mul) * BigInt(mod);
     }
     const rem = ret % product;
-    console.log(rem);
     const positiveInt = (n: number) => n === Math.floor(n) && n > 0;
     return zip(sumsOfPos, sumsOfDx).every(([pos, dx]) => {
       return positiveInt((Number(rem) - pos) / (dx - answer));
@@ -138,11 +135,7 @@ function part2(input: Input, isTest: boolean) {
       ? rem
       : 0;
   });
-  console.log(res.find((v) => v));
-  if (!isTest) {
-    process.exit(0);
-  }
   return Number(res.find((v) => v));
 }
 
-solve({ part1, test1: 2, part2, test2: 47, parser });
+solve({ part1, test1: 2, part2, parser });
