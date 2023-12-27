@@ -6,4 +6,5 @@ const days = readdirSync(join(__dirname, '..')).filter((f) =>
   f.startsWith('day'),
 );
 const sortedDays = sortBy(days, (d) => parseInt(d.slice(3)));
-require(`../${sortedDays.at(-1)}/solve`);
+const day = process.argv[2] ? `day${process.argv[2]}` : sortedDays.at(-1);
+require(`../${day}/solve`);
